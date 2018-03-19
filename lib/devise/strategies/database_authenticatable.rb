@@ -15,7 +15,14 @@ module Devise
         end
 
         mapping.to.new.password = password if !hashed && Devise.paranoid
-        fail(:not_found_in_database) unless resource
+        unless resource
+          resource = mapping.to.find_for_database_authentication(authentication_hash.merge(not_withdrawn: true))
+          if resource && (resource.class.parent.name == "Manager") && resource.withdrawn_at
+            fail(:company_stopped)
+          else
+            fail(:not_found_in_database)
+          end
+        end
       end
     end
   end
