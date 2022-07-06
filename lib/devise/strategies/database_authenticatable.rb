@@ -21,7 +21,12 @@ module Devise
         # exist in the database if the password hashing algorithm is not called.
         mapping.to.new.password = password if !hashed && Devise.paranoid
         unless resource
-          Devise.paranoid ? fail(:invalid) : fail(:not_found_in_database)
+          resource = mapping.to.find_for_database_authentication(authentication_hash.merge(not_withdrawn: true))
+          if resource && (resource.class.parent.name == "Manager") && resource.withdrawn_at
+            fail(:company_stopped)
+          else
+            Devise.paranoid ? fail(:invalid) : fail(:not_found_in_database)
+          end
         end
       end
     end

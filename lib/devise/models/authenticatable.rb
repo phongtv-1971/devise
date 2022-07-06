@@ -95,7 +95,11 @@ module Devise
       end
 
       def inactive_message
-        :inactive
+        if self.class.parent.name == "Manager" && self.withdrawn_at
+          :company_stopped
+        else
+          :inactive
+        end
       end
 
       def authenticatable_salt
