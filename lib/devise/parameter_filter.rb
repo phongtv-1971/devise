@@ -31,6 +31,7 @@ module Devise
     def stringify_params(conditions)
       return conditions unless conditions.is_a?(Hash)
       conditions.each do |k, v|
+        next if k.to_sym == :withdrawn_at
         conditions[k] = v.to_s if param_requires_string_conversion?(v)
       end
     end

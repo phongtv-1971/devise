@@ -287,10 +287,16 @@ module Devise
 
         # Find or initialize a record with group of attributes based on a list of required attributes.
         def find_or_initialize_with_errors(required_attributes, attributes, error = :invalid) #:nodoc:
+          # Only for authenticate with withdrawn_at
+          # Using for only User
+          required_attributes.delete_if{|att| att == :withdrawn_at}
+          if required_attributes.include?(:email) && self.name == "User"
+            required_attributes.push :withdrawn_at
+          end
           attributes.try(:permit!)
           attributes = attributes.to_h.with_indifferent_access
                                  .slice(*required_attributes)
-                                 .delete_if { |key, value| value.blank? }
+                                 .delete_if { |key, value| value.blank? && key.to_sym != :withdrawn_at }
 
           if attributes.size == required_attributes.size
             record = find_first_by_auth_conditions(attributes) and return record
