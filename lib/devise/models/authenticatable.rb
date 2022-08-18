@@ -95,7 +95,7 @@ module Devise
       end
 
       def inactive_message
-        if self.class.parent.name == "Manager" && self.withdrawn_at
+        if self.class.module_parent.name == "Manager" && self.withdrawn_at
           :company_stopped
         else
           :inactive

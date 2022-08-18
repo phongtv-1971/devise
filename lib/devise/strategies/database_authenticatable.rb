@@ -23,7 +23,7 @@ module Devise
         unless resource
           if mapping.to.name == "Manager"
             resource = mapping.to.find_for_database_authentication(authentication_hash.merge(not_withdrawn: true))
-            if resource && (resource.class.parent.name == "Manager") && resource.withdrawn_at
+            if resource && (resource.class.module_parent.name == "Manager") && resource.withdrawn_at
               fail(:company_stopped)
             else
               Devise.paranoid ? fail(:invalid) : fail(:not_found_in_database)
